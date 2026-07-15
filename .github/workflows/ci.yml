@@ -28,30 +28,30 @@ jobs:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
-            milestone-fund/contracts/target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('milestone-fund/contracts/Cargo.toml') }}
+            contracts/target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('contracts/Cargo.toml') }}
           restore-keys: |
             ${{ runner.os }}-cargo-
 
       - name: Check Rust Formatting
         run: cargo fmt --all -- --check
-        working-directory: milestone-fund/contracts
+        working-directory: contracts
 
       - name: Run Clippy Linter
         run: cargo clippy --all-targets -- -D warnings
-        working-directory: milestone-fund/contracts
+        working-directory: contracts
 
       - name: Build Escrow Contract (Target wasm32v1-none)
         run: cargo build --target wasm32v1-none --release -p escrow
-        working-directory: milestone-fund/contracts
+        working-directory: contracts
 
       - name: Build Campaign Contract (Target wasm32v1-none)
         run: cargo build --target wasm32v1-none --release -p campaign
-        working-directory: milestone-fund/contracts
+        working-directory: contracts
 
       - name: Run Cargo Unit Tests
         run: cargo test
-        working-directory: milestone-fund/contracts
+        working-directory: contracts
 
   frontend-react:
     name: Frontend React CI
@@ -67,22 +67,22 @@ jobs:
         with:
           node-version: 20
           cache: 'npm'
-          cache-dependency-path: milestone-fund/frontend/package-lock.json
+          cache-dependency-path: frontend/package-lock.json
 
       - name: Install Frontend Dependencies
         run: npm ci
-        working-directory: milestone-fund/frontend
+        working-directory: frontend
 
       - name: Generate Mock Contracts Config for CI Build
         run: |
           mkdir -p src
           echo '{"network":"testnet","deployer":"GA2XSJVTLCQHAKG7DNHKE33GETBVGX4JIDOEVAUQIRUUFFQ7VWY4WSWQ","escrowContractId":"CACAATRLLNDKGD3FHA4XLUKKEMGRUESPML5PFETGXSPYERUJZP5LKPWK","campaignContractId":"CALJXWAACIBVO7ERMODME6W2VLET3Q2BT4ULWAECE3OUHPWAHADM3TVP","escrowWasmHash":"eb4ef9cc926d92116c984af18cf888a531047486d6ebc9e672433c6354626613"}' > src/contracts.json
-        working-directory: milestone-fund/frontend
+        working-directory: frontend
 
       - name: Run Frontend Unit Tests
         run: npm run test
-        working-directory: milestone-fund/frontend
+        working-directory: frontend
 
       - name: Build Frontend Application
         run: npm run build
-        working-directory: milestone-fund/frontend
+        working-directory: frontend
