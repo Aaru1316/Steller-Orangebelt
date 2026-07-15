@@ -206,22 +206,22 @@ async function executeTransaction(
     console.log(`Transaction submitted. Hash: ${txHash}. Polling status...`);
 
     // 6. Poll for transaction confirmation
-    let status = sendResponse.status;
+    let status: string = sendResponse.status;
     let attempts = 0;
-    while ((status as any) === 'PENDING' && attempts < 20) {
+    while (status !== 'SUCCESS' && status !== 'FAILED' && attempts < 30) {
         await new Promise(resolve => setTimeout(resolve, 2000));
         const txResponse = await rpcServer.getTransaction(txHash);
         status = txResponse.status as any;
         
-        if ((status as any) === 'SUCCESS') {
+        if (status === 'SUCCESS') {
             return txHash;
-        } else if ((status as any) === 'FAILED') {
+        } else if (status === 'FAILED') {
             throw new Error(`Transaction failed execution: ${JSON.stringify((txResponse as any).resultXdr || '')}`);
         }
         attempts++;
     }
 
-    if (status === 'PENDING') {
+    if (status !== 'SUCCESS') {
         throw new Error('Transaction execution timed out.');
     }
     
@@ -281,15 +281,15 @@ export async function deployEscrowContract(
 
     // Poll transaction status
     const txHash = sendResponse.hash;
-    let status = sendResponse.status;
+    let status: string = sendResponse.status;
     let attempts = 0;
-    while ((status as any) === 'PENDING' && attempts < 20) {
+    while (status !== 'SUCCESS' && status !== 'FAILED' && attempts < 30) {
         await new Promise(resolve => setTimeout(resolve, 2000));
         const txResponse = await rpcServer.getTransaction(txHash);
         status = txResponse.status as any;
-        if ((status as any) === 'SUCCESS') {
+        if (status === 'SUCCESS') {
             return escrowContractId;
-        } else if ((status as any) === 'FAILED') {
+        } else if (status === 'FAILED') {
             throw new Error(`Escrow deployment execution failed: ${JSON.stringify((txResponse as any).resultXdr || '')}`);
         }
         attempts++;
