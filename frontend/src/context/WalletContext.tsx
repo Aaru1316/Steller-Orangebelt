@@ -88,7 +88,8 @@ export const WalletProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         setError(null);
         try {
             const signedResult = await signTransaction(xdr, {
-                networkPassphrase
+                networkPassphrase,
+                address: address || undefined
             });
             let signedXdr: string;
             if (typeof signedResult === 'string') {
