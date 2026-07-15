@@ -30,9 +30,12 @@ impl EscrowContract {
     /// Deposits funds from backer into this Escrow contract.
     /// Only callable by the associated Campaign contract.
     pub fn deposit(env: Env, backer: Address, amount: i128) {
-        let campaign = env.storage().instance().get::<_, Address>(&DataKey::Campaign)
+        let campaign = env
+            .storage()
+            .instance()
+            .get::<_, Address>(&DataKey::Campaign)
             .expect("Escrow not initialized");
-        
+
         // Ensure only the campaign contract is calling deposit
         campaign.require_auth();
 
@@ -40,7 +43,10 @@ impl EscrowContract {
             panic!("Deposit amount must be positive");
         }
 
-        let token_addr = env.storage().instance().get::<_, Address>(&DataKey::Token)
+        let token_addr = env
+            .storage()
+            .instance()
+            .get::<_, Address>(&DataKey::Token)
             .expect("Escrow not initialized");
         let token_client = token::Client::new(&env, &token_addr);
 
@@ -49,34 +55,54 @@ impl EscrowContract {
 
         // Update tracking balances
         let balance_key = DataKey::Balance(backer.clone());
-        let current_balance = env.storage().instance().get::<_, i128>(&balance_key).unwrap_or(0);
-        env.storage().instance().set(&balance_key, &(current_balance + amount));
+        let current_balance = env
+            .storage()
+            .instance()
+            .get::<_, i128>(&balance_key)
+            .unwrap_or(0);
+        env.storage()
+            .instance()
+            .set(&balance_key, &(current_balance + amount));
 
-        let total_balance = env.storage().instance().get::<_, i128>(&DataKey::TotalBalance).unwrap_or(0);
-        env.storage().instance().set(&DataKey::TotalBalance, &(total_balance + amount));
+        let total_balance = env
+            .storage()
+            .instance()
+            .get::<_, i128>(&DataKey::TotalBalance)
+            .unwrap_or(0);
+        env.storage()
+            .instance()
+            .set(&DataKey::TotalBalance, &(total_balance + amount));
 
         // Emit event
-        env.events().publish(
-            (Symbol::new(&env, "escrow_deposit"), backer),
-            amount
-        );
+        env.events()
+            .publish((Symbol::new(&env, "escrow_deposit"), backer), amount);
     }
 
     /// Releases a specified amount of funds to the recipient.
     /// Only callable by the associated Campaign contract.
     pub fn release(env: Env, recipient: Address, amount: i128) {
-        let campaign = env.storage().instance().get::<_, Address>(&DataKey::Campaign)
+        let campaign = env
+            .storage()
+            .instance()
+            .get::<_, Address>(&DataKey::Campaign)
             .expect("Escrow not initialized");
-        
+
         // Ensure only the campaign contract is calling release
         campaign.require_auth();
 
-        let total_balance = env.storage().instance().get::<_, i128>(&DataKey::TotalBalance).unwrap_or(0);
+        let total_balance = env
+            .storage()
+            .instance()
+            .get::<_, i128>(&DataKey::TotalBalance)
+            .unwrap_or(0);
         if amount > total_balance {
             panic!("Insufficient escrow balance for release");
         }
 
-        let token_addr = env.storage().instance().get::<_, Address>(&DataKey::Token)
+        let token_addr = env
+            .storage()
+            .instance()
+            .get::<_, Address>(&DataKey::Token)
             .expect("Escrow not initialized");
         let token_client = token::Client::new(&env, &token_addr);
 
@@ -84,31 +110,41 @@ impl EscrowContract {
         token_client.transfer(&env.current_contract_address(), &recipient, &amount);
 
         // Update total balance
-        env.storage().instance().set(&DataKey::TotalBalance, &(total_balance - amount));
+        env.storage()
+            .instance()
+            .set(&DataKey::TotalBalance, &(total_balance - amount));
 
         // Emit event
-        env.events().publish(
-            (Symbol::new(&env, "escrow_release"), recipient),
-            amount
-        );
+        env.events()
+            .publish((Symbol::new(&env, "escrow_release"), recipient), amount);
     }
 
     /// Refunds a backer their total pledged balance.
     /// Only callable by the Campaign contract.
     pub fn refund(env: Env, backer: Address, amount: i128) {
-        let campaign = env.storage().instance().get::<_, Address>(&DataKey::Campaign)
+        let campaign = env
+            .storage()
+            .instance()
+            .get::<_, Address>(&DataKey::Campaign)
             .expect("Escrow not initialized");
-        
+
         // Ensure only campaign can call refund
         campaign.require_auth();
 
         let balance_key = DataKey::Balance(backer.clone());
-        let backer_balance = env.storage().instance().get::<_, i128>(&balance_key).unwrap_or(0);
+        let backer_balance = env
+            .storage()
+            .instance()
+            .get::<_, i128>(&balance_key)
+            .unwrap_or(0);
         if backer_balance < amount {
             panic!("Insufficient balance to refund requested amount");
         }
 
-        let token_addr = env.storage().instance().get::<_, Address>(&DataKey::Token)
+        let token_addr = env
+            .storage()
+            .instance()
+            .get::<_, Address>(&DataKey::Token)
             .expect("Escrow not initialized");
         let token_client = token::Client::new(&env, &token_addr);
 
@@ -116,25 +152,37 @@ impl EscrowContract {
         token_client.transfer(&env.current_contract_address(), &backer, &amount);
 
         // Update balances
-        env.storage().instance().set(&balance_key, &(backer_balance - amount));
+        env.storage()
+            .instance()
+            .set(&balance_key, &(backer_balance - amount));
 
-        let total_balance = env.storage().instance().get::<_, i128>(&DataKey::TotalBalance).unwrap_or(0);
-        env.storage().instance().set(&DataKey::TotalBalance, &(total_balance - amount));
+        let total_balance = env
+            .storage()
+            .instance()
+            .get::<_, i128>(&DataKey::TotalBalance)
+            .unwrap_or(0);
+        env.storage()
+            .instance()
+            .set(&DataKey::TotalBalance, &(total_balance - amount));
 
         // Emit event
-        env.events().publish(
-            (Symbol::new(&env, "escrow_refund"), backer),
-            amount
-        );
+        env.events()
+            .publish((Symbol::new(&env, "escrow_refund"), backer), amount);
     }
 
     /// Read function to check current total balance.
     pub fn get_balance(env: Env) -> i128 {
-        env.storage().instance().get::<_, i128>(&DataKey::TotalBalance).unwrap_or(0)
+        env.storage()
+            .instance()
+            .get::<_, i128>(&DataKey::TotalBalance)
+            .unwrap_or(0)
     }
 
     /// Read function to check balance of a specific backer.
     pub fn get_backer_balance(env: Env, backer: Address) -> i128 {
-        env.storage().instance().get::<_, i128>(&DataKey::Balance(backer)).unwrap_or(0)
+        env.storage()
+            .instance()
+            .get::<_, i128>(&DataKey::Balance(backer))
+            .unwrap_or(0)
     }
 }

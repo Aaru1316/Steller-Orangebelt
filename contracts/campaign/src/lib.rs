@@ -3,9 +3,7 @@ use soroban_sdk::{contract, contractimpl, contracttype, Address, Env, String, Sy
 
 // Import Escrow Contract's generated client
 mod escrow_contract {
-    soroban_sdk::contractimport!(
-        file = "../target_build/wasm32v1-none/release/escrow.wasm"
-    );
+    soroban_sdk::contractimport!(file = "../target_build/wasm32v1-none/release/escrow.wasm");
 }
 use escrow_contract::Client as EscrowClient;
 
@@ -105,9 +103,15 @@ impl CampaignContract {
         }
 
         // Increment campaign counter
-        let mut count: u32 = env.storage().instance().get(&DataKey::CampaignCount).unwrap_or(0);
+        let mut count: u32 = env
+            .storage()
+            .instance()
+            .get(&DataKey::CampaignCount)
+            .unwrap_or(0);
         count += 1;
-        env.storage().instance().set(&DataKey::CampaignCount, &count);
+        env.storage()
+            .instance()
+            .set(&DataKey::CampaignCount, &count);
 
         // Initialize the Escrow contract via cross-contract call
         let escrow_client = EscrowClient::new(&env, &escrow);
@@ -128,12 +132,14 @@ impl CampaignContract {
             completed: false,
         };
 
-        env.storage().persistent().set(&DataKey::Campaign(count), &campaign);
+        env.storage()
+            .persistent()
+            .set(&DataKey::Campaign(count), &campaign);
 
         // Emit event
         env.events().publish(
             (Symbol::new(&env, "campaign_created"), count, creator),
-            title
+            title,
         );
 
         count
@@ -143,7 +149,10 @@ impl CampaignContract {
     pub fn pledge(env: Env, campaign_id: u32, backer: Address, amount: i128) {
         backer.require_auth();
 
-        let mut campaign = env.storage().persistent().get::<_, Campaign>(&DataKey::Campaign(campaign_id))
+        let mut campaign = env
+            .storage()
+            .persistent()
+            .get::<_, Campaign>(&DataKey::Campaign(campaign_id))
             .expect("Campaign not found");
 
         if env.ledger().timestamp() >= campaign.deadline {
@@ -162,17 +171,25 @@ impl CampaignContract {
 
         // Record backer pledge
         let pledge_key = DataKey::Pledge(campaign_id, backer.clone());
-        let current_pledge = env.storage().persistent().get::<_, i128>(&pledge_key).unwrap_or(0);
-        env.storage().persistent().set(&pledge_key, &(current_pledge + amount));
+        let current_pledge = env
+            .storage()
+            .persistent()
+            .get::<_, i128>(&pledge_key)
+            .unwrap_or(0);
+        env.storage()
+            .persistent()
+            .set(&pledge_key, &(current_pledge + amount));
 
         // Update campaign pledged amount
         campaign.total_pledged += amount;
-        env.storage().persistent().set(&DataKey::Campaign(campaign_id), &campaign);
+        env.storage()
+            .persistent()
+            .set(&DataKey::Campaign(campaign_id), &campaign);
 
         // Emit event
         env.events().publish(
             (Symbol::new(&env, "pledge_made"), campaign_id, backer),
-            amount
+            amount,
         );
     }
 
@@ -181,7 +198,10 @@ impl CampaignContract {
     pub fn vote_milestone(env: Env, campaign_id: u32, backer: Address, approve: bool) {
         backer.require_auth();
 
-        let mut campaign = env.storage().persistent().get::<_, Campaign>(&DataKey::Campaign(campaign_id))
+        let mut campaign = env
+            .storage()
+            .persistent()
+            .get::<_, Campaign>(&DataKey::Campaign(campaign_id))
             .expect("Campaign not found");
 
         if campaign.completed {
@@ -207,7 +227,11 @@ impl CampaignContract {
 
         // Get backer pledge weight
         let pledge_key = DataKey::Pledge(campaign_id, backer.clone());
-        let pledge_amount = env.storage().persistent().get::<_, i128>(&pledge_key).unwrap_or(0);
+        let pledge_amount = env
+            .storage()
+            .persistent()
+            .get::<_, i128>(&pledge_key)
+            .unwrap_or(0);
         if pledge_amount <= 0 {
             panic!("Only backers can vote");
         }
@@ -238,27 +262,36 @@ impl CampaignContract {
                 campaign.completed = true;
                 env.events().publish(
                     (Symbol::new(&env, "campaign_completed"), campaign_id),
-                    campaign.creator.clone()
+                    campaign.creator.clone(),
                 );
             }
 
             // Emit milestone approved event
             env.events().publish(
-                (Symbol::new(&env, "milestone_approved"), campaign_id, current_index),
-                milestone.amount
+                (
+                    Symbol::new(&env, "milestone_approved"),
+                    campaign_id,
+                    current_index,
+                ),
+                milestone.amount,
             );
         }
 
         // Update the milestone in the campaign vector
         campaign.milestones.set(current_index, milestone);
-        env.storage().persistent().set(&DataKey::Campaign(campaign_id), &campaign);
+        env.storage()
+            .persistent()
+            .set(&DataKey::Campaign(campaign_id), &campaign);
     }
 
     /// Backers can request a refund if the campaign did not meet the funding goal by the deadline.
     pub fn refund(env: Env, campaign_id: u32, backer: Address) {
         backer.require_auth();
 
-        let campaign = env.storage().persistent().get::<_, Campaign>(&DataKey::Campaign(campaign_id))
+        let campaign = env
+            .storage()
+            .persistent()
+            .get::<_, Campaign>(&DataKey::Campaign(campaign_id))
             .expect("Campaign not found");
 
         if env.ledger().timestamp() < campaign.deadline {
@@ -269,7 +302,11 @@ impl CampaignContract {
         }
 
         let pledge_key = DataKey::Pledge(campaign_id, backer.clone());
-        let pledge_amount = env.storage().persistent().get::<_, i128>(&pledge_key).unwrap_or(0);
+        let pledge_amount = env
+            .storage()
+            .persistent()
+            .get::<_, i128>(&pledge_key)
+            .unwrap_or(0);
         if pledge_amount <= 0 {
             panic!("No pledge found to refund");
         }
@@ -284,29 +321,39 @@ impl CampaignContract {
         // Emit refund event
         env.events().publish(
             (Symbol::new(&env, "refund_issued"), campaign_id, backer),
-            pledge_amount
+            pledge_amount,
         );
     }
 
     /// Read function to retrieve campaign info.
     pub fn get_campaign(env: Env, campaign_id: u32) -> Campaign {
-        env.storage().persistent().get::<_, Campaign>(&DataKey::Campaign(campaign_id))
+        env.storage()
+            .persistent()
+            .get::<_, Campaign>(&DataKey::Campaign(campaign_id))
             .expect("Campaign not found")
     }
 
     /// Get total campaigns count.
     pub fn get_campaign_count(env: Env) -> u32 {
-        env.storage().instance().get(&DataKey::CampaignCount).unwrap_or(0)
+        env.storage()
+            .instance()
+            .get(&DataKey::CampaignCount)
+            .unwrap_or(0)
     }
 
     /// Get the amount pledged by a specific backer to a campaign.
     pub fn get_backer_pledge(env: Env, campaign_id: u32, backer: Address) -> i128 {
-        env.storage().persistent().get::<_, i128>(&DataKey::Pledge(campaign_id, backer)).unwrap_or(0)
+        env.storage()
+            .persistent()
+            .get::<_, i128>(&DataKey::Pledge(campaign_id, backer))
+            .unwrap_or(0)
     }
 
     /// Check if a backer has voted on a milestone.
     pub fn has_voted(env: Env, campaign_id: u32, milestone_index: u32, backer: Address) -> bool {
-        env.storage().persistent().has(&DataKey::Voted(campaign_id, milestone_index, backer))
+        env.storage()
+            .persistent()
+            .has(&DataKey::Voted(campaign_id, milestone_index, backer))
     }
 }
 
