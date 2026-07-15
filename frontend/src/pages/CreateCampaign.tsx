@@ -79,8 +79,10 @@ export const CreateCampaign: React.FC<CreateCampaignProps> = ({ setCurrentPage }
             return;
         }
 
+        const goalStroops = BigInt(Math.round(goalFloat * 10000000));
+
         // Validate milestones
-        let milestoneSum = 0;
+        let milestoneStroopsSum = 0n;
         const parsedMilestones: { description: string; amount: bigint }[] = [];
         
         for (let i = 0; i < milestones.length; i++) {
@@ -94,15 +96,17 @@ export const CreateCampaign: React.FC<CreateCampaignProps> = ({ setCurrentPage }
                 setErrorMsg(`Please enter a valid amount for Milestone #${i + 1}`);
                 return;
             }
-            milestoneSum += mAmountFloat;
+            const amountStroops = BigInt(Math.round(mAmountFloat * 10000000));
+            milestoneStroopsSum += amountStroops;
             parsedMilestones.push({
                 description: m.description,
-                amount: BigInt(Math.round(mAmountFloat * 10000000))
+                amount: amountStroops
             });
         }
 
-        if (Math.abs(milestoneSum - goalFloat) > 0.00001) {
-            setErrorMsg(`The sum of milestone allocations (${milestoneSum} XLM) must exactly equal the total funding goal (${goalFloat} XLM).`);
+        if (milestoneStroopsSum !== goalStroops) {
+            const currentSumXLM = Number(milestoneStroopsSum) / 10000000;
+            setErrorMsg(`The sum of milestone allocations (${currentSumXLM} XLM) must exactly equal the total funding goal (${goalFloat} XLM).`);
             return;
         }
 
@@ -134,7 +138,6 @@ export const CreateCampaign: React.FC<CreateCampaignProps> = ({ setCurrentPage }
 
             // Step 2: Create Campaign
             setLoadingMessage('Step 2 of 2: Registering campaign and locking Escrow... Please sign the transaction in Freighter.');
-            const goalStroops = BigInt(Math.round(goalFloat * 10000000));
             const txHash = await createCampaignTx(
                 address,
                 escrowAddress,
