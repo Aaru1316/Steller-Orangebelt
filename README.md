@@ -54,6 +54,15 @@ sequenceDiagram
 
 ---
 
+## 📸 Screenshots & Demos
+
+### 📱 Mobile Responsive UI
+*Here is a preview of the platform's mobile-responsive user interface showing the dashboard and campaign creation views:*
+
+![Mobile Responsive UI](docs/screenshots/mobile_ui.png)
+
+---
+
 ## 📁 Project Folder Structure
 
 ```
@@ -177,6 +186,11 @@ cd frontend
 npm run test
 ```
 
+### 🧪 Tests Execution Output
+*Here is a screenshot of the successfully passing test suite (3+ unit tests) for both Smart Contracts and React Frontend:*
+
+![Test Output](docs/screenshots/test_output.png)
+
 ---
 
 ## 🚀 CI/CD Pipeline
@@ -185,6 +199,11 @@ The project includes a GitHub Actions configuration `.github/workflows/ci.yml` t
 1.  **Lints:** Runs `cargo fmt --check` and `cargo clippy -- -D warnings` on smart contracts.
 2.  **Rust Tests:** Compiles target WASM binaries and executes `cargo test`.
 3.  **Frontend Build:** Installs node modules, executes frontend tests `npm run test`, and validates production compilation `npm run build`.
+
+### ⚙️ GitHub Actions CI/CD Pipeline Running
+*Here is a screenshot of the automated lint, formatting, smart contract build, and frontend compilation checks passing on GitHub Actions:*
+
+![CI/CD Pipeline](docs/screenshots/cicd_pipeline.png)
 
 ---
 
