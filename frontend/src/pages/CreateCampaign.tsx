@@ -255,7 +255,7 @@ export const CreateCampaign: React.FC<CreateCampaignProps> = ({ setCurrentPage }
                                 <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Funding Deadline</label>
                                 <div className="relative">
                                     <input
-                                        type="datetime-local"
+                                        type="date"
                                         value={deadline}
                                         onChange={(e) => setDeadline(e.target.value)}
                                         className="w-full pl-4 pr-10 py-3 rounded-xl bg-slate-900 border border-white/10 text-slate-200 text-sm focus:outline-none focus:border-brand-indigo/80 focus:ring-1 focus:ring-brand-indigo/30"
