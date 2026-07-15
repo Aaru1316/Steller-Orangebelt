@@ -106,7 +106,16 @@ export const CreateCampaign: React.FC<CreateCampaignProps> = ({ setCurrentPage }
             return;
         }
 
-        const deadlineTimestamp = Math.floor(new Date(deadline).getTime() / 1000);
+        const dateParts = deadline.split('-');
+        let deadlineTimestamp = NaN;
+        if (dateParts.length === 3) {
+            const year = parseInt(dateParts[0], 10);
+            const month = parseInt(dateParts[1], 10);
+            const day = parseInt(dateParts[2], 10);
+            const localDate = new Date(year, month - 1, day, 23, 59, 59);
+            deadlineTimestamp = Math.floor(localDate.getTime() / 1000);
+        }
+
         if (isNaN(deadlineTimestamp) || deadlineTimestamp <= Math.floor(Date.now() / 1000)) {
             setErrorMsg('The campaign deadline must be set to a future date.');
             return;
