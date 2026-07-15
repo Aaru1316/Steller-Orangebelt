@@ -37,12 +37,12 @@ jobs:
         run: cargo fmt --all -- --check
         working-directory: contracts
 
-      - name: Run Clippy Linter
-        run: cargo clippy --all-targets -- -D warnings
-        working-directory: contracts
-
       - name: Build Escrow Contract (Target wasm32v1-none)
         run: cargo build --target wasm32v1-none --release -p escrow
+        working-directory: contracts
+
+      - name: Run Clippy Linter
+        run: cargo clippy --all-targets -- -D warnings
         working-directory: contracts
 
       - name: Build Campaign Contract (Target wasm32v1-none)

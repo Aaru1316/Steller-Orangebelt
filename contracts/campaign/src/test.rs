@@ -80,7 +80,7 @@ fn test_campaign_flow() {
     assert_eq!(campaign.funding_goal, 1000);
     assert_eq!(campaign.total_pledged, 0);
     assert_eq!(campaign.current_milestone, 0);
-    assert_eq!(campaign.completed, false);
+    assert!(!campaign.completed);
     assert_eq!(campaign.milestones.len(), 2);
 
     // Pledge from Backer 1 (400 XLM)
@@ -140,7 +140,7 @@ fn test_campaign_flow() {
 
     let campaign = campaign_client.get_campaign(&1);
     assert_eq!(campaign.current_milestone, 2);
-    assert_eq!(campaign.completed, true);
+    assert!(campaign.completed);
     assert_eq!(token_client.balance(&creator), 1000); // creator received all 1000 XLM
     assert_eq!(token_client.balance(&escrow_id), 0); // escrow empty
 }

@@ -1,1 +1,4 @@
 # Target flags configured natively by wasm32v1-none
+
+[build]
+target-dir = "target_build"
