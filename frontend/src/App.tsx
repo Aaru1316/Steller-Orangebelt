@@ -62,7 +62,7 @@ function AppContent() {
                     <div className="flex gap-6 text-slate-400 font-semibold">
                         <a href="#" className="hover:text-brand-cyan transition-colors">Privacy Policy</a>
                         <a href="#" className="hover:text-brand-cyan transition-colors">Terms of Service</a>
-                        <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="hover:text-brand-cyan transition-colors">GitHub</a>
+                        <a href="https://github.com/Aaru1316/Steller-Orangebelt" target="_blank" rel="noopener noreferrer" className="hover:text-brand-cyan transition-colors">GitHub</a>
                     </div>
                 </div>
             </footer>
