@@ -34,6 +34,7 @@ export const CreateCampaign: React.FC<CreateCampaignProps> = ({ setCurrentPage }
     
     // Default native XLM token contract address on Testnet
     const [tokenAddress, setTokenAddress] = useState('CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC');
+    const [useCustomToken, setUseCustomToken] = useState(false);
     
     const [milestones, setMilestones] = useState<MilestoneInput[]>([
         { description: 'Milestone 1: Prototype', amount: '' }
@@ -156,6 +157,8 @@ export const CreateCampaign: React.FC<CreateCampaignProps> = ({ setCurrentPage }
             setFundingGoal('');
             setDeadline('');
             setMilestones([{ description: 'Milestone 1: ', amount: '' }]);
+            setUseCustomToken(false);
+            setTokenAddress('CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC');
             
             // Redirect after 3 seconds
             setTimeout(() => {
@@ -283,20 +286,58 @@ export const CreateCampaign: React.FC<CreateCampaignProps> = ({ setCurrentPage }
                             </div>
 
                             {/* Token Contract address */}
-                            <div className="space-y-2 md:col-span-2">
-                                <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                                    Stellar Token Contract Address
-                                    <span className="text-[10px] bg-brand-cyan/15 text-brand-cyan border border-brand-cyan/25 px-2 py-0.5 rounded">Default: Native XLM</span>
+                            <div className="space-y-3 md:col-span-2">
+                                <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                                    Funding Token Asset
                                 </label>
-                                <input
-                                    type="text"
-                                    placeholder="Enter stellar token address"
-                                    value={tokenAddress}
-                                    onChange={(e) => setTokenAddress(e.target.value)}
-                                    className="w-full px-4 py-3 rounded-xl bg-slate-900 border border-white/10 text-slate-350 font-mono text-sm focus:outline-none focus:border-brand-indigo/80 focus:ring-1 focus:ring-brand-indigo/30"
-                                    required
-                                    disabled={isSubmitting}
-                                />
+                                <div className="grid grid-cols-2 gap-4">
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setUseCustomToken(false);
+                                            setTokenAddress('CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC');
+                                        }}
+                                        className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl border text-sm font-bold transition-all cursor-pointer ${
+                                            !useCustomToken 
+                                                ? 'bg-brand-indigo/15 border-brand-indigo text-brand-cyan shadow-md shadow-brand-indigo/5' 
+                                                : 'bg-slate-900 border-white/10 text-slate-400 hover:border-white/20'
+                                        }`}
+                                        disabled={isSubmitting}
+                                    >
+                                        Native XLM (Recommended)
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setUseCustomToken(true);
+                                            setTokenAddress('');
+                                        }}
+                                        className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl border text-sm font-bold transition-all cursor-pointer ${
+                                            useCustomToken 
+                                                ? 'bg-brand-indigo/15 border-brand-indigo text-brand-cyan shadow-md shadow-brand-indigo/5' 
+                                                : 'bg-slate-900 border-white/10 text-slate-400 hover:border-white/20'
+                                        }`}
+                                        disabled={isSubmitting}
+                                    >
+                                        Custom Stellar Token
+                                    </button>
+                                </div>
+                                {useCustomToken && (
+                                    <div className="space-y-1.5 animate-fadeIn">
+                                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                                            Token Contract Address (Starts with 'C')
+                                        </label>
+                                        <input
+                                            type="text"
+                                            placeholder="e.g. CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC"
+                                            value={tokenAddress}
+                                            onChange={(e) => setTokenAddress(e.target.value)}
+                                            className="w-full px-4 py-3 rounded-xl bg-slate-900 border border-white/10 text-slate-200 font-mono text-sm focus:outline-none focus:border-brand-indigo/80 focus:ring-1 focus:ring-brand-indigo/30"
+                                            required
+                                            disabled={isSubmitting}
+                                        />
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
