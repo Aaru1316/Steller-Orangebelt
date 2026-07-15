@@ -412,8 +412,11 @@ export async function fetchEvents(startLedger: number = 0): Promise<{ events: So
         const latestLedgerResponse = await rpcServer.getLatestLedger();
         const latestLedger = latestLedgerResponse.sequence;
 
-        // Query events from either startLedger or last 1000 ledgers
-        const start = startLedger > 0 ? startLedger : Math.max(1, latestLedger - 1000);
+        // Query events from either startLedger or last 1000 ledgers, clamped to last 10,000 ledgers to avoid out-of-range errors
+        let start = startLedger > 0 ? startLedger : latestLedger - 1000;
+        if (start < latestLedger - 10000) {
+            start = latestLedger - 10000;
+        }
         
         const response = await rpcServer.getEvents({
             startLedger: start,
