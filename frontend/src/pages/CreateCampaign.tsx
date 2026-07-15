@@ -33,7 +33,7 @@ export const CreateCampaign: React.FC<CreateCampaignProps> = ({ setCurrentPage }
     const [deadline, setDeadline] = useState('');
     
     // Default native XLM token contract address on Testnet
-    const [tokenAddress, setTokenAddress] = useState('CDLZFC3SYJYDATH7KSEYF2CHM6BYHDOP7LJMCHBAUPRBEKXP642KKMSO');
+    const [tokenAddress, setTokenAddress] = useState('CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC');
     
     const [milestones, setMilestones] = useState<MilestoneInput[]>([
         { description: 'Milestone 1: Prototype', amount: '' }

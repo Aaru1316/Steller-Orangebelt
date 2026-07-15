@@ -61,7 +61,7 @@ describe('CampaignCard Component', () => {
         id: 1,
         creator: 'GACREATOR1234567890',
         escrow: 'CDESCROW1234567890',
-        token: 'CDLZFC3SYJYDATH7KSEYF2CHM6BYHDOP7LJMCHBAUPRBEKXP642KKMSO',
+        token: 'CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC',
         title: 'Save the Oceans',
         description: 'Removing plastic waste from international waters.',
         funding_goal: 10000000000n, // 1000 XLM (in stroops)
