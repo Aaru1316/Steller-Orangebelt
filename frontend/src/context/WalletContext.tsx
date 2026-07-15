@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
-import { isConnected, getAddress, signTransaction } from '@stellar/freighter-api';
+import { isConnected, requestAccess, signTransaction } from '@stellar/freighter-api';
 
 interface WalletContextType {
     address: string | null;
@@ -23,8 +23,9 @@ export const WalletProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     useEffect(() => {
         const checkFreighter = async () => {
             try {
-                const installed = await isConnected();
-                setIsFreighterInstalled(!!installed);
+                const res = await isConnected();
+                const installed = !!res && res.isConnected;
+                setIsFreighterInstalled(installed);
 
                 // Auto-connect if already authorized
                 if (installed) {
@@ -45,22 +46,20 @@ export const WalletProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         setIsConnecting(true);
         setError(null);
         try {
-            const installed = await isConnected();
-            if (!installed) {
+            const res = await isConnected();
+            if (!res || !res.isConnected) {
                 const errMsg = 'Freighter Wallet extension is not installed.';
                 setError(errMsg);
                 setIsConnecting(false);
                 return null;
             }
 
-            const response = await getAddress();
-            let walletAddress: string | null = null;
-            
-            if (typeof response === 'string') {
-                walletAddress = response;
-            } else if (response && typeof response === 'object' && 'address' in response) {
-                walletAddress = (response as { address: string }).address;
+            const response = await requestAccess();
+            if (response.error) {
+                throw new Error(response.error);
             }
+
+            const walletAddress = response.address;
 
             if (!walletAddress) {
                 throw new Error('User did not authorize wallet connection.');
