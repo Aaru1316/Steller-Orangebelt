@@ -203,7 +203,7 @@ The project includes a GitHub Actions configuration `.github/workflows/ci.yml` t
 ### ⚙️ GitHub Actions CI/CD Pipeline Running
 *Here is a screenshot of the automated lint, formatting, smart contract build, and frontend compilation checks passing on GitHub Actions:*
 
-![CI/CD Pipeline](docs/screenshots/cicd_pipeline.png)
+![alt text](image-3.png)
 
 ---
 
