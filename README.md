@@ -59,7 +59,7 @@ sequenceDiagram
 ### 📱 Mobile Responsive UI
 *Here is a preview of the platform's mobile-responsive user interface showing the dashboard and campaign creation views:*
 
-![Mobile Responsive UI](docs/screenshots/mobile_ui.png)
+![alt text](image.png)
 
 ---
 
@@ -189,7 +189,7 @@ npm run test
 ### 🧪 Tests Execution Output
 *Here is a screenshot of the successfully passing test suite (3+ unit tests) for both Smart Contracts and React Frontend:*
 
-![Test Output](docs/screenshots/test_output.png)
+![alt text](image-2.png)
 
 ---
 

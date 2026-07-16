@@ -111,6 +111,12 @@ export const CreateCampaign: React.FC<CreateCampaignProps> = ({ setCurrentPage }
             return;
         }
 
+        const trimmedToken = tokenAddress.trim();
+        if (!trimmedToken.startsWith('C') || trimmedToken.length !== 56) {
+            setErrorMsg('The Token Contract Address must start with "C" and be exactly 56 characters long (Stellar Contract ID).');
+            return;
+        }
+
         const dateParts = deadline.split('-');
         let deadlineTimestamp = NaN;
         if (dateParts.length === 3) {
