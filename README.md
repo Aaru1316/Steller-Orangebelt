@@ -58,16 +58,7 @@ sequenceDiagram
     end
 ```
 
----
 
-## 📸 Screenshots & Demos
-
-### 📱 Mobile Responsive UI
-*Here is a preview of the platform's mobile-responsive user interface showing the dashboard and campaign creation views:*
-
-![alt text](image.png)
-
----
 
 ## 📁 Project Folder Structure
 
@@ -191,6 +182,18 @@ Run Vitest unit tests checking rendering, Freighter wallet connections, progress
 cd frontend
 npm run test
 ```
+
+## 📸 Screenshots & Demos
+
+### Wallet Connect
+![alt text](image-4.png)
+
+### 📱 Mobile Responsive UI
+*Here is a preview of the platform's mobile-responsive user interface showing the dashboard and campaign creation views:*
+
+![alt text](image.png)
+
+---
 
 ### 🧪 Tests Execution Output
 *Here is a screenshot of the successfully passing test suite (3+ unit tests) for both Smart Contracts and React Frontend:*
