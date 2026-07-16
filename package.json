@@ -1,0 +1,10 @@
+{
+  "name": "milestone-fund-root",
+  "private": true,
+  "workspaces": [
+    "frontend"
+  ],
+  "scripts": {
+    "build": "npm run build --workspace=frontend"
+  }
+}
