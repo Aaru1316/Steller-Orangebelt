@@ -6,6 +6,12 @@ The platform protects backers from creator abandonment or fraud by holding pledg
 
 ---
 
+## 🔗 Live Links & Demos
+*   **Live Deployment URL:** [https://steller-orangebelt.vercel.app/](https://steller-orangebelt.vercel.app/)
+*   **Video Walkthrough / Demo:** [Google Drive Video Link](https://drive.google.com/file/d/1gRjBtEGLPvHUkn4y608oLsl__-jVnpf8/view?usp=sharing)
+
+---
+
 ## 🏗️ Architecture & Interaction Diagram
 
 Below is the interaction flow between the Backer, Creator, Campaign Contract, and Escrow Contract:
